@@ -1,9 +1,9 @@
 /*
  * @Author: hechao “chao.he@genowis.com”
- * @LastEditTime: 2023-04-19 22时
- * @Description: 原PureAdmin封装的Axios
- * 新增：接口报错时给出toast提示；对接口返回值进行校验；
+ * @LastEditTime: 2023-04-22 19时
+ * @Description: 直接调用协议接口
  */
+
 import Axios, {
   AxiosInstance,
   AxiosRequestConfig,
@@ -28,20 +28,9 @@ const defaultConfig: AxiosRequestConfig = {
   timeout: 0,
   headers: {
     'Accept': '*/*',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    // "X-Requested-With": "XMLHttpRequest"
-  },
-  // 数组格式参数序列化（https://github.com/axios/axios/issues/5142）
-  paramsSerializer: {
-    serialize: stringify as unknown as CustomParamsSerializer
+    'Content-Type': 'application/json'
   }
 };
-
-// let wa_token = window.localStorage.getItem("wa_token");
-// console.log('token2:',wa_token);
-// if (wa_token) { 
-//   defaultConfig.headers["wa-token"] = wa_token;
-// }
 
 class PureHttp {
   constructor() {
@@ -124,7 +113,7 @@ class PureHttp {
           });
       },
       error => {
-        let msg = `接口请求失败:${ error.toString() }`
+        let msg = `接口请求失败:${error.toString()}`
         message(msg, { type: "error" });
         return Promise.reject(error);
       }
@@ -148,25 +137,14 @@ class PureHttp {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
         }
-
-        // wa项目新增：判断接口返回值格式
-        let data = response.data;
-        if (data && data.Code == 200 && data.Msg == "成功") {
-          return data;
-        } else {
-          let msg = `接口请求失败`
-          if (data && data.Msg) msg += data.Msg;
-          message(msg, { type: "error" });
-          return false;
-        }
         
+        let data = response.data;
+        return data;
+
       },
       (error: PureHttpError) => {
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
-
-        let msg = `接口请求失败`
-        message(msg, { type: "error" });
 
         // 关闭进度条动画
         NProgress.done();
@@ -202,24 +180,7 @@ class PureHttp {
         });
     });
   }
-
-  /** 单独抽离的post工具函数 */
-  public post<T, P>(
-    url: string,
-    params?: AxiosRequestConfig<T>,
-    config?: PureHttpRequestConfig
-  ): Promise<P> {
-    return this.request<P>("post", url, params, config);
-  }
-
-  /** 单独抽离的get工具函数 */
-  public get<T, P>(
-    url: string,
-    params?: AxiosRequestConfig<T>,
-    config?: PureHttpRequestConfig
-  ): Promise<P> {
-    return this.request<P>("get", url, params, config);
-  }
 }
 
-export const http = new PureHttp();
+export const agreement = new PureHttp();
+

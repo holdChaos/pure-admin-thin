@@ -18,7 +18,7 @@ const { title } = useNav();
         class="sidebar-logo-link"
         to="/"
       >
-        <img src="/logo.svg" alt="logo" />
+        <img src="/logo.png" alt="logo" />
         <span class="sidebar-title">{{ title }}</span>
       </router-link>
       <router-link
@@ -28,7 +28,7 @@ const { title } = useNav();
         class="sidebar-logo-link"
         to="/"
       >
-        <img src="/logo.svg" alt="logo" />
+        <img src="/logo.png" alt="logo" />
         <span class="sidebar-title">{{ title }}</span>
       </router-link>
     </transition>

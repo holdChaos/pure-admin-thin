@@ -8,7 +8,18 @@ import { addIcon } from "@iconify/vue/dist/offline";
 import HomeFilled from "@iconify-icons/ep/home-filled";
 import InformationLine from "@iconify-icons/ri/information-line";
 import Lollipop from "@iconify-icons/ep/lollipop";
+import Register from "@iconify-icons/ep/avatar"
+import Chat from "@iconify-icons/ep/chat-round"
+import ChatGroup from "@iconify-icons/ep/chat-dot-round"
+import User from "@iconify-icons/ep/user"
+import Login from "@iconify-icons/ep/user-filled"
+
 
 addIcon("homeFilled", HomeFilled);
 addIcon("informationLine", InformationLine);
 addIcon("lollipop", Lollipop);
+addIcon("Register", Register);
+addIcon("Chat", Chat);
+addIcon("ChatGroup", ChatGroup);
+addIcon("User", User);
+addIcon("Login", Login);

@@ -11,12 +11,19 @@ import { bg, avatar, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, toRaw, onMounted, onBeforeUnmount } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
-import { initRouter } from "@/router/utils";
+
+import { setToken } from "@/utils/auth";
+import { addPathMatch } from "@/router/utils";
+import { usePermissionStoreHook } from "@/store/modules/permission";
+
+import { login } from '@/api/platform/index'
 
 import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
+
+import { storageSession } from "@pureadmin/utils";
 
 defineOptions({
   name: "Login"
@@ -33,8 +40,8 @@ dataThemeChange();
 const { title } = useNav();
 
 const ruleForm = reactive({
-  username: "admin",
-  password: "admin123"
+  username: "",
+  password: ""
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {
@@ -42,17 +49,48 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      useUserStoreHook()
-        .loginByUsername({ username: ruleForm.username, password: "admin123" })
-        .then(res => {
-          if (res.success) {
-            // 获取后端路由
-            initRouter().then(() => {
-              router.push("/");
-              message("登录成功", { type: "success" });
-            });
+      // 接口请求
+      login({
+        account: ruleForm.username,
+        password: ruleForm.password
+      }).then(data => {
+        console.log('data:', data);
+        if (data && data.Code == 200) {
+
+          if (data.Msg == "成功") {
+            // return;
+            // storageSession().setItem('wa_token', data.Data.Token);
+            window.localStorage.setItem('wa_token', data.Data.Token);
+            window.localStorage.setItem('wa_id', data.Data.ID);
+            // 全部采取静态路由模式
+            usePermissionStoreHook().handleWholeMenus([]);
+            addPathMatch();
+            setToken({
+              username: ruleForm.username,
+              roles: ["admin"],
+              accessToken: data.Data.Token
+            } as any);
+            router.push("/");
+            message("登录成功", { type: "success" });
+          } else { 
+            let msg = data.Msg || "账号或密码错误";
+            message(msg, { type: "error" });  
           }
-        });
+
+          
+        } else {
+          message("接口请求失败", { type: "error" });
+        }
+        
+        
+      }).catch(error => {
+        console.log('登录失败：', error);
+        message("接口请求失败", { type: "error" });
+      }).finally(() => {
+        loading.value = false;
+      })
+
+      
     } else {
       loading.value = false;
       return fields;

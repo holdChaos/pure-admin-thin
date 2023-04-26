@@ -40,7 +40,7 @@ watch(
     class="horizontal-header"
   >
     <div class="horizontal-header-left" @click="backHome">
-      <img src="/logo.svg" alt="logo" />
+      <img src="/logo.png" alt="logo" />
       <span>{{ title }}</span>
     </div>
     <el-menu
@@ -62,7 +62,7 @@ watch(
       <!-- 菜单搜索 -->
       <Search />
       <!-- 通知 -->
-      <Notice id="header-notice" />
+      <!-- <Notice id="header-notice" /> -->
       <!-- 退出登录 -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link navbar-bg-hover">
